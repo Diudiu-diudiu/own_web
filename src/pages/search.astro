@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatDate, pathWithBase } from '../data/site';
+const groups = [
+  { collection: 'life', entries: await getCollection('life', ({ data }) => data.public) },
+  { collection: 'learning', entries: await getCollection('learning', ({ data }) => data.public) },
+  { collection: 'projects', entries: await getCollection('projects', ({ data }) => data.public) },
+] as const;
+const labels = { life: '生活', learning: '学习', projects: '项目' } as const;
+const index = groups.flatMap(({ collection, entries }) => entries.map((entry) => ({ title: entry.data.title, description: entry.data.description, category: entry.data.category, tags: entry.data.tags, date: formatDate(entry.data.date), type: labels[collection], url: pathWithBase(`/${collection}/${entry.id}/`) })));
+---
+<BaseLayout title="搜索" description="搜索 Starfish 海星自留地的文章与项目。">
+  <section class="search-page container">
+    <p class="eyebrow">Search the archive</p><h1>想找哪一片记忆？</h1>
+    <label class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="搜索标题、描述、标签或分类……" autofocus /><kbd>ESC</kbd></label>
+    <div class="search-summary"><p data-summary>输入关键词，开始翻找这片自留地。</p></div>
+    <div class="search-results" aria-live="polite"></div>
+  </section>
+  <script define:vars={{ searchIndex: index }}>
+    const input = document.querySelector('.search-box input');
+    const results = document.querySelector('.search-results');
+    const summary = document.querySelector('[data-summary]');
+    const escapeHtml = (value) => value.replace(/[&<>'"]/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[char]));
+    const render = () => {
+      const query = input.value.trim().toLowerCase();
+      if (!query) { results.innerHTML = ''; summary.textContent = '输入关键词，开始翻找这片自留地。'; return; }
+      const matches = searchIndex.filter((item) => [item.title, item.description, item.category, ...item.tags].join(' ').toLowerCase().includes(query));
+      summary.textContent = `找到 ${matches.length} 条与“${input.value.trim()}”有关的内容`;
+      results.innerHTML = matches.map((item) => `<a class="search-result" href="${item.url}"><div><span>${escapeHtml(item.type)} · ${escapeHtml(item.category)}</span><time>${escapeHtml(item.date)}</time></div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p><small>${item.tags.map((tag) => `#${escapeHtml(tag)}`).join(' ')}</small></a>`).join('') || '<p class="empty-state">没有找到。也许它还在未来的某一天。</p>';
+    };
+    input.addEventListener('input', render);
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { input.value = ''; render(); input.focus(); } });
+  </script>
+</BaseLayout>

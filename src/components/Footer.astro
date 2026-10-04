@@ -1,0 +1,11 @@
+---
+import { siteConfig, pathWithBase } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div><span class="footer-star" aria-hidden="true">✦</span><strong>Starfish</strong><p>把普通日子，好好收藏。</p></div>
+    <div class="footer-links"><a href={pathWithBase('/about/')}>关于</a><a href={siteConfig.github} target="_blank" rel="noreferrer">GitHub</a><a href={pathWithBase('/search/')}>搜索</a></div>
+    <p class="copyright">© {year} Starfish<br />Built with Astro & quiet curiosity.</p>
+  </div>
+</footer>

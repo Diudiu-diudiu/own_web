@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { pathWithBase } from '../data/site';
+interface Props { entry: CollectionEntry<'projects'>; index?: number }
+const { entry, index = 0 } = Astro.props;
+const cover = entry.data.cover ? pathWithBase(entry.data.cover) : undefined;
+---
+<article class="project-card" data-search={`${entry.data.title} ${entry.data.description} ${entry.data.tags.join(' ')}`.toLowerCase()}>
+  <a class="project-visual" href={pathWithBase(`/projects/${entry.id}/`)} tabindex="-1">
+    {cover && <img src={cover} alt="" loading="lazy" />}
+    <span class="project-number">0{index + 1}</span>
+  </a>
+  <div class="project-info">
+    <p class="eyebrow">Project / {String(index + 1).padStart(2, '0')}</p>
+    <h3><a href={pathWithBase(`/projects/${entry.id}/`)}>{entry.data.title}</a></h3>
+    <p>{entry.data.description}</p>
+    <div class="tag-row">{entry.data.tags.map((tag) => <span>{tag}</span>)}</div>
+  </div>
+</article>

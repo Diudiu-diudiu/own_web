@@ -1,0 +1,62 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { pathWithBase, siteConfig } from '../data/site';
+
+const byDate = <T extends CollectionEntry<'life'> | CollectionEntry<'learning'>>(a: T, b: T) => b.data.date.valueOf() - a.data.date.valueOf();
+const life = (await getCollection('life', ({ data }) => data.public)).sort(byDate);
+const learning = (await getCollection('learning', ({ data }) => data.public)).sort(byDate);
+const projects = (await getCollection('projects', ({ data }) => data.public)).sort((a, b) => Number(b.data.featured) - Number(a.data.featured));
+---
+<BaseLayout>
+  <section class="hero">
+    <div class="hero-sun" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">A small place by the sea · since 2026</p>
+        <h1><span>Starfish</span>海星自留地</h1>
+        <p class="hero-lead">{siteConfig.description}</p>
+        <p class="hero-note">{siteConfig.intro}</p>
+        <div class="hero-actions"><a class="button primary" href={pathWithBase('/life/')}>读最近的记录</a><a class="button quiet" href={pathWithBase('/about/')}>认识我 <span>↗</span></a></div>
+      </div>
+      <div class="tide-note" aria-label="今日手记">
+        <span class="note-pin" aria-hidden="true">✦</span>
+        <p class="note-date">OCT. 04</p>
+        <p>“慢慢记录，<br />答案会从日子里长出来。”</p>
+        <div class="tide-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+    <div class="hero-wave" aria-hidden="true"></div>
+  </section>
+
+  <section class="section container">
+    <SectionHeading eyebrow="Recent notes" title="最近记录" note="一些刚刚被捡起、还带着海风的小事。" href={pathWithBase('/life/')} />
+    <div class="posts-grid">{life.slice(0, 3).map((entry, index) => <PostCard entry={entry} collection="life" featured={index === 0} />)}</div>
+  </section>
+
+  <section class="learning-band">
+    <div class="container learning-home">
+      <SectionHeading eyebrow="Now learning" title="正在把好奇变成能力" note="不追赶浪潮，认真理解每一件正在学习的事。" href={pathWithBase('/learning/')} linkLabel="查看学习地图" />
+      <div class="learning-snapshot">
+        <div class="learning-status"><span class="pulse" aria-hidden="true"></span><small>目前进行中</small><strong>Java Web 与项目部署</strong><p>从接口、数据到上线，把零散知识连成一条完整路径。</p></div>
+        <div class="learning-list">{learning.slice(0, 2).map((entry, index) => <a href={pathWithBase(`/learning/${entry.id}/`)}><span>0{index + 1}</span><div><strong>{entry.data.title}</strong><small>{entry.data.description}</small></div><b aria-hidden="true">↗</b></a>)}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <SectionHeading eyebrow="Selected work" title="认真做过的事" note="让想法离开草稿纸，成为真正可以工作的东西。" href={pathWithBase('/projects/')} />
+    <div class="project-list">{projects.slice(0, 2).map((entry, index) => <ProjectCard entry={entry} index={index} />)}</div>
+  </section>
+
+  <section class="about-strip">
+    <div class="container about-home">
+      <p class="about-glyph" aria-hidden="true">＊</p>
+      <div><p class="eyebrow">A little about me</p><h2>在技术与生活之间，<br />保留一块柔软的自留地。</h2></div>
+      <div><p>我在学习如何用代码解决真实问题，也在练习认真看见普通日子。这里没有标准答案，只有诚实的过程。</p><a class="text-link" href={pathWithBase('/about/')}>继续认识我 <span>↗</span></a></div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pathWithBase, siteConfig } from '../data/site';
+---
+<BaseLayout title="关于我" description="关于 Starfish：正在学习什么，想做什么，以及为什么建立这个网站。">
+  <section class="about-page container">
+    <div class="about-title"><p class="eyebrow">Hello, I'm Starfish.</p><h1>保持好奇，<br />也保持温柔。</h1><p>一个正在认真学习技术，也认真体验生活的普通人。</p></div>
+    <div class="portrait-placeholder" aria-label="海星个人标识"><span>✦</span><small>STAY CURIOUS<br />STAY GENTLE</small></div>
+    <div class="about-story prose"><h2>为什么是“海星自留地”</h2><p>海星并不赶路。它沿着自己的节奏，在潮起潮落之间慢慢移动。我也想保留这样一个地方：不迎合算法，不追逐热闹，只记录真正经过的生活。</p><blockquote>记录生活，也记录自己的成长。</blockquote><p>现在的我关注 Java Web、人工智能、机器人与项目部署。我喜欢把复杂问题一点点拆开，也喜欢旅行、电影、游戏、音乐和好吃的东西。</p></div>
+    <div class="about-facts">
+      <div><span>01</span><h3>正在学习</h3><p>Java / Spring Boot / 数据库 / Vue / Linux / Docker</p></div>
+      <div><span>02</span><h3>技术方向</h3><p>Web 工程、AI 应用、机器人与多模态感知</p></div>
+      <div><span>03</span><h3>想做的事</h3><p>让技术离开演示稿，真正解决现实中的问题</p></div>
+    </div>
+    <div class="about-contact"><p class="eyebrow">Elsewhere</p><h2>可以从一段代码开始认识我。</h2><a class="button primary" href={siteConfig.github} target="_blank" rel="noreferrer">前往 GitHub <span>↗</span></a><a class="button quiet" href={pathWithBase('/projects/')}>看看我的项目</a></div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,18 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, pathWithBase } from '../data/site';
+type Entry = CollectionEntry<'life'> | CollectionEntry<'learning'>;
+interface Props { entry: Entry; collection: 'life' | 'learning'; featured?: boolean }
+const { entry, collection, featured = false } = Astro.props;
+const href = pathWithBase(`/${collection}/${entry.id}/`);
+const cover = entry.data.cover ? pathWithBase(entry.data.cover) : undefined;
+---
+<article class:list={['post-card', { featured }]} data-category={entry.data.category} data-search={`${entry.data.title} ${entry.data.description} ${entry.data.category} ${entry.data.tags.join(' ')}`.toLowerCase()}>
+  {cover && <a class="card-image" href={href} tabindex="-1"><img src={cover} alt="" loading="lazy" /></a>}
+  <div class="card-body">
+    <div class="card-meta"><span>{entry.data.category}</span><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></div>
+    <h3><a href={href}>{entry.data.title}</a></h3>
+    <p>{entry.data.description}</p>
+    <div class="tag-row">{entry.data.tags.map((tag) => <a href={pathWithBase(`/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>)}</div>
+  </div>
+</article>

@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+export async function getStaticPaths() {
+  const groups = await Promise.all([
+    getCollection('life', ({ data }) => data.public),
+    getCollection('learning', ({ data }) => data.public),
+    getCollection('projects', ({ data }) => data.public),
+  ]);
+  const tags = [...new Set(groups.flat().flatMap((entry) => entry.data.tags))];
+  return tags.map((tag) => ({ params: { tag }, props: { tag, life: groups[0].filter((entry) => entry.data.tags.includes(tag)), learning: groups[1].filter((entry) => entry.data.tags.includes(tag)), projects: groups[2].filter((entry) => entry.data.tags.includes(tag)) } }));
+}
+const { tag, life, learning, projects } = Astro.props;
+---
+<BaseLayout title={`#${tag}`} description={`查看标签“${tag}”下的生活、学习与项目记录。`}>
+  <section class="tag-page container"><p class="eyebrow">Collected by tag</p><h1>#{tag}</h1><p>共找到 {life.length + learning.length + projects.length} 条相关内容</p>
+    <div class="posts-grid archive-grid">{life.map((entry) => <PostCard entry={entry} collection="life" />)}{learning.map((entry) => <PostCard entry={entry} collection="learning" />)}</div>
+    {projects.length > 0 && <div class="project-list tag-projects">{projects.map((entry, index) => <ProjectCard entry={entry} index={index} />)}</div>}
+  </section>
+</BaseLayout>

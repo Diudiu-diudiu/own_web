@@ -1,0 +1,13 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+const entries = (await getCollection('projects', ({ data }) => data.public)).sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout title="项目" description="Starfish 的项目作品：让想法变成真实可用的系统。">
+  <section class="page-hero projects-hero"><div class="container"><p class="eyebrow">Projects · selected work</p><h1>让想法，<br />真正开始工作。</h1><p>从机器人到多模态感知，每个项目都是一次跨过“不确定”的练习。</p></div></section>
+  <section class="section container">
+    <div class="project-intro"><p>这里不只陈列结果，也保留问题、取舍和迭代的痕迹。</p><span>{entries.length} 个公开项目</span></div>
+    <div class="project-list projects-page">{entries.map((entry, index) => <ProjectCard entry={entry} index={index} />)}</div>
+  </section>
+</BaseLayout>

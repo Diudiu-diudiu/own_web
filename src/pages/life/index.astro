@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { lifeCategories } from '../../data/site';
+const entries = (await getCollection('life', ({ data }) => data.public)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const tags = [...new Set(entries.flatMap((entry) => entry.data.tags))];
+---
+<BaseLayout title="生活" description="旅行、游戏、电影、美食与那些值得收藏的普通日子。">
+  <section class="page-hero life-hero"><div class="container"><p class="eyebrow">Life archive · 生活切片</p><h1>把日子捡起来，<br />一片一片收藏。</h1><p>旅行、游戏、电影、美食，还有一些说不清意义却舍不得忘记的瞬间。</p></div></section>
+  <section class="archive container" data-filter-root>
+    <div class="filter-bar" aria-label="文章筛选">
+      <div class="filter-scroll">{lifeCategories.map((category, index) => <button type="button" class:list={{ active: index === 0 }} data-category={category}>{category}</button>)}</div>
+      <label class="inline-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="搜索这些日子……" aria-label="搜索生活文章" /></label>
+    </div>
+    <div class="tag-filter"><span>标签</span>{tags.map((tag) => <button type="button" data-tag={tag}>#{tag}</button>)}</div>
+    <p class="result-count">共 <strong data-count>{entries.length}</strong> 篇记录</p>
+    <div class="posts-grid archive-grid">{entries.map((entry) => <PostCard entry={entry} collection="life" />)}</div>
+    <p class="empty-state" hidden>没有找到对应的记录，换个词试试吧。</p>
+  </section>
+  <script src="../../scripts/filter.ts"></script>
+</BaseLayout>

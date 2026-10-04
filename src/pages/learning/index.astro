@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { learningPath } from '../../data/site';
+const entries = (await getCollection('learning', ({ data }) => data.public)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const technologies = ['Java', 'Spring Boot', 'MyBatis', 'Vue', 'Linux', 'Docker', 'AI', 'Git'];
+---
+<BaseLayout title="学习成长" description="Starfish 的技能路线、学习状态和技术笔记。">
+  <section class="page-hero learning-hero"><div class="container"><p class="eyebrow">Learning in public</p><h1>慢一点没关系，<br />重要的是一直在长大。</h1><p>这里记录“会用”之前的困惑，也记录真正弄明白之后的快乐。</p></div></section>
+  <section class="section container">
+    <div class="section-heading"><div><p class="eyebrow">Roadmap</p><h2>技能路线</h2><p class="section-note">路线不是清单，是一张持续修改的地图。</p></div></div>
+    <ol class="roadmap">{learningPath.map((step, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{step.name}</strong><small>{step.note}</small></div></li>)}</ol>
+  </section>
+  <section class="tech-band"><div class="container"><p class="eyebrow">Toolbox</p><h2>正在认识的工具</h2><div class="tech-cloud">{technologies.map((item, index) => <span style={`--i:${index}`}>{item}</span>)}</div></div></section>
+  <section class="section container" data-filter-root>
+    <div class="section-heading"><div><p class="eyebrow">Learning notes</p><h2>学习记录</h2><p class="section-note">理解一个问题，比记住一个答案更重要。</p></div><label class="inline-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="搜索学习笔记……" aria-label="搜索学习笔记" /></label></div>
+    <div class="posts-grid archive-grid">{entries.map((entry) => <PostCard entry={entry} collection="learning" />)}</div>
+    <p class="empty-state" hidden>没有找到对应的学习记录。</p>
+  </section>
+  <script src="../../scripts/filter.ts"></script>
+</BaseLayout>

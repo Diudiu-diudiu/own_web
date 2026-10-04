@@ -1,0 +1,14 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+export async function getStaticPaths() {
+  const entries = (await getCollection('projects', ({ data }) => data.public)).sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+  return entries.map((entry, index) => ({ params: { slug: entry.id }, props: { entry, previous: entries[index - 1], next: entries[index + 1] } }));
+}
+const { entry, previous, next } = Astro.props;
+const { Content } = await render(entry);
+---
+<PostLayout entry={entry} collection="projects" previous={previous} next={next}>
+  {(entry.data.github || entry.data.demo) && <div class="project-actions">{entry.data.github && <a class="button primary" href={entry.data.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a>}{entry.data.demo && <a class="button quiet" href={entry.data.demo} target="_blank" rel="noreferrer">在线演示 <span>↗</span></a>}</div>}
+  <Content />
+</PostLayout>
